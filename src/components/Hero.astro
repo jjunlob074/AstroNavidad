@@ -63,14 +63,14 @@
     const waveSpeed = 0.0005; // Velocidad de las olas
     const maxHeight = 100; // Altura máxima que puede alcanzar la acumulación
   
-    let waveHeightOffset = - 100; // Desplazamiento de la ola que sube
+    let waveHeightOffset = - 50; // Desplazamiento de la ola que sube
   
     // Crear un copo de nieve con parámetros aleatorios
     function createSnowflake() {
       const x = Math.random() * canvas.width;
       const y = Math.random() * canvas.height;
       const radius = Math.random() * 10 + 2; // Mayor tamaño de copos para un efecto más visible
-      const speed = Math.random() * 1 + 0.5; // Velocidad de caída
+      const speed = Math.random() * 1 + 0.7; // Velocidad de caída
       const opacity = Math.random() * 0.4 + 0.6; // Opacidad aleatoria para dar realismo
       const depth = 1; // Profundidad para el efecto 3D (más bajo es más cercano)
       snowflakes.push({ x, y, radius, speed, opacity, depth });
@@ -124,7 +124,7 @@
     function animate() {
       // Incrementar el desplazamiento de la ola (hasta el límite)
       if (waveHeightOffset < maxHeight) {
-        waveHeightOffset += 0.1; // Controlar la velocidad de subida
+        waveHeightOffset += 0.2; // Controlar la velocidad de subida
       }
 
       drawSnowflakes();
