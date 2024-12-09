@@ -1,0 +1,44 @@
+---
+const targetDate = new Date("2024-12-25T00:00:00").getTime();
+---
+<section class="py-16 bg-gradient-to-r from-red-800 to-red-600 border-8 border-green-800 text-white text-center shadow-2xl">
+    <h2 id="countdown" class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-shadow-md mb-6">
+      ¡Faltan 
+        <span class="text-yellow-300 text-4xl sm:text-7xl font-semibold" id="days">0</span> días, 
+        <span class="text-yellow-300 text-4xl sm:text-7xl font-semibold" id="hours">0</span> horas, 
+        <span class="text-yellow-300 text-4xl sm:text-7xl font-semibold" id="minutes">0</span> minutos y 
+        <span class="text-yellow-300 text-4xl sm:text-7xl font-semibold" id="seconds">0</span> segundos para Navidad!
+    </h2>
+  </section>
+  
+<script>
+  const targetDate = new Date("2024-12-25T00:00:00").getTime();
+  
+  function updateCounter() {
+    const timeLeft = targetDate - Date.now();
+
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+    // Verifica que los elementos no sean nulos antes de asignarles el contenido
+    const daysElem = document.getElementById("days");
+    const hoursElem = document.getElementById("hours");
+    const minutesElem = document.getElementById("minutes");
+    const secondsElem = document.getElementById("seconds");
+
+    if (daysElem && hoursElem && minutesElem && secondsElem) {
+      // Asigna los valores convertidos a string
+      daysElem.textContent = String(days);
+      hoursElem.textContent = String(hours);
+      minutesElem.textContent = String(minutes);
+      secondsElem.textContent = String(seconds);
+    }
+  }
+
+  // Actualiza el contador cada segundo
+  setInterval(updateCounter, 1000);
+
+  updateCounter(); // Inicializa el contador de inmediato
+</script>

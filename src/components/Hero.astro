@@ -1,0 +1,230 @@
+<section id="home" class="flex items-center justify-center w-full h-screen relative bg-gradient-to-b from-slate-950 to-slate-900 text-center overflow-hidden">
+    <div class="container mx-auto text-center relative z-10 px-6 text-gray-800">
+        <!-- Encabezado y mensaje -->
+        <h1 class="sm:text-6xl text-2xl font-extrabold leading-tight mb-4">
+            <span class="animate-light1">🎄</span>
+            <span class="animate-light2">¡</span>
+            <span class="animate-light3">F</span>
+            <span class="animate-light4">e</span>
+            <span class="animate-light5">l</span>
+            <span class="animate-light6">i</span>
+            <span class="animate-light7">z</span>
+            <span class="animate-light8"> 🎁</span>
+            <span class="animate-light9">N</span>
+            <span class="animate-light10">a</span>
+            <span class="animate-light11">v</span>
+            <span class="animate-light12">i</span>
+            <span class="animate-light13">d</span>
+            <span class="animate-light14">a</span>
+            <span class="animate-light15">d</span>
+            <span class="animate-light16"> ❄️</span>
+            <span class="animate-light17">y</span>
+            <span class="animate-light18"> 🌟</span>
+            <span class="animate-light19">P</span>
+            <span class="animate-light20">r</span>
+            <span class="animate-light21">ó</span>
+            <span class="animate-light22">s</span>
+            <span class="animate-light23">p</span>
+            <span class="animate-light24">e</span>
+            <span class="animate-light25">r</span>
+            <span class="animate-light26">o</span>
+            <span class="animate-light27"> 🎅</span>
+            <span class="animate-light28">A</span>
+            <span class="animate-light29">ñ</span>
+            <span class="animate-light30">o</span>
+            <span class="animate-light31"> 🦌</span>
+            <span class="animate-light32">N</span>
+            <span class="animate-light33">u</span>
+            <span class="animate-light34">e</span>
+            <span class="animate-light35">v</span>
+            <span class="animate-light36">o</span>
+            <span class="animate-light37">! </span>
+            <span class="animate-light38">🎉</span>
+        </h1>
+    </div>
+    <!-- Efecto de Nieve -->
+    <div class="absolute inset-0 z-0">
+      <canvas id="snowCanvas" class="w-full h-full"></canvas>
+    </div>
+</section>
+
+<script type="module">
+  window.addEventListener('load', () => {
+    const canvas = document.getElementById('snowCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  
+    const snowflakes = [];
+    const snowAccumulation = Array(canvas.width).fill(0); // Mantener la acumulación de nieve por cada columna
+    const maxSnowflakes = 50;
+    const waveAmplitude = 5; // Amplitud de las olas
+    const waveFrequency = 0.01; // Frecuencia de las olas
+    const waveSpeed = 0.0005; // Velocidad de las olas
+    const maxHeight = 100; // Altura máxima que puede alcanzar la acumulación
+  
+    let waveHeightOffset = - 100; // Desplazamiento de la ola que sube
+  
+    // Crear un copo de nieve con parámetros aleatorios
+    function createSnowflake() {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const radius = Math.random() * 10 + 2; // Mayor tamaño de copos para un efecto más visible
+      const speed = Math.random() * 1 + 0.5; // Velocidad de caída
+      const opacity = Math.random() * 0.4 + 0.6; // Opacidad aleatoria para dar realismo
+      const depth = 1; // Profundidad para el efecto 3D (más bajo es más cercano)
+      snowflakes.push({ x, y, radius, speed, opacity, depth });
+    }
+  
+    // Dibujar la acumulación de nieve con forma de olita
+    function drawWave() {
+      ctx.fillStyle = 'rgba(255, 255, 255)';
+      ctx.beginPath();
+      // Dibujar la olita en la base
+      for (let i = 0; i < canvas.width; i++) {
+        const waveHeight = Math.sin(i * waveFrequency + Date.now() * waveSpeed) * waveAmplitude;
+        const snowHeight = snowAccumulation[i];
+        // Desplazar la ola hacia arriba a medida que pasa el tiempo, hasta un límite
+        const yPos = canvas.height - waveHeight - snowHeight - 50 - waveHeightOffset; // Ubicación de la olita con acumulación
+        ctx.lineTo(i, yPos);
+      }
+      ctx.lineTo(canvas.width, canvas.height); // Cerrar el camino
+      ctx.lineTo(0, canvas.height); // Cerrar el camino
+      ctx.fill();
+    }
+
+    // Dibujar los copos de nieve y el efecto de acumulación
+    function drawSnowflakes() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+  
+      // Dibujar la acumulación de nieve con la olita
+      drawWave();
+  
+      // Dibujar los copos de nieve
+      snowflakes.forEach(snowflake => {
+        const scale = snowflake.depth; // La "profundidad" controla el tamaño visual del copo
+  
+        ctx.fillStyle = `rgba(255, 255, 255, ${snowflake.opacity})`;
+        ctx.beginPath();
+        ctx.arc(snowflake.x, snowflake.y, snowflake.radius * scale, 0, Math.PI * 2);
+        ctx.fill();
+  
+        // Mover los copos de nieve con la simulación 3D
+        snowflake.y += snowflake.speed; // El movimiento en Y depende de la profundidad
+  
+        // Si el copo llega al fondo, acumularlo en la zona correspondiente
+        if (snowflake.y > canvas.height) {
+          snowflake.y = -snowflake.radius; // Reiniciar la posición vertical del copo
+          snowflake.x = Math.random() * canvas.width; // Reiniciar la posición horizontal
+        }
+      });
+    }
+
+    // Animación
+    function animate() {
+      // Incrementar el desplazamiento de la ola (hasta el límite)
+      if (waveHeightOffset < maxHeight) {
+        waveHeightOffset += 0.05; // Controlar la velocidad de subida
+      }
+
+      drawSnowflakes();
+      requestAnimationFrame(animate);
+    }
+
+    // Crear nieve al cargar la página
+    for (let i = 0; i < maxSnowflakes; i++) {
+      createSnowflake();
+    }
+  
+    animate();
+  });
+</script>
+
+<style>
+    @keyframes light {
+        0% { 
+            color: #ff1a1a; 
+            text-shadow: 0 0 5px #ff1a1a, 0 0 10px #ff1a1a, 0 0 15px #ff1a1a; 
+        }
+        10% { 
+            color: #ff6600; 
+            text-shadow: 0 0 6px #ff6600, 0 0 12px #ff6600, 0 0 18px #ff6600; 
+        }
+        20% { 
+            color: #ffea00; 
+            text-shadow: 0 0 8px #ffea00, 0 0 16px #ffea00, 0 0 24px #ffea00; 
+        }
+        30% { 
+            color: #66ff33; 
+            text-shadow: 0 0 10px #66ff33, 0 0 20px #66ff33, 0 0 30px #66ff33; 
+        }
+        40% { 
+            color: #00b3ff; 
+            text-shadow: 0 0 12px #00b3ff, 0 0 24px #00b3ff, 0 0 36px #00b3ff; 
+        }
+        50% { 
+            color: #00ff99; 
+            text-shadow: 0 0 15px #00ff99, 0 0 30px #00ff99, 0 0 45px #00ff99; 
+        }
+        60% { 
+            color: #ff00e6; 
+            text-shadow: 0 0 18px #ff00e6, 0 0 36px #ff00e6, 0 0 54px #ff00e6; 
+        }
+        70% { 
+            color: #b300ff; 
+            text-shadow: 0 0 20px #b300ff, 0 0 40px #b300ff, 0 0 60px #b300ff; 
+        }
+        80% { 
+            color: #ff33cc; 
+            text-shadow: 0 0 25px #ff33cc, 0 0 50px #ff33cc, 0 0 75px #ff33cc; 
+        }
+        90% { 
+            color: #ff0066; 
+            text-shadow: 0 0 30px #ff0066, 0 0 60px #ff0066, 0 0 90px #ff0066; 
+        }
+        100% { 
+            color: #ff1a1a; 
+            text-shadow: 0 0 35px #ff1a1a, 0 0 70px #ff1a1a, 0 0 105px #ff1a1a; 
+        }
+    }
+
+    .animate-light1 { animation: light 7s infinite alternate; animation-delay: 0s; }
+.animate-light2 { animation: light 7s infinite alternate; animation-delay: 0.2s; }
+.animate-light3 { animation: light 7s infinite alternate; animation-delay: 0.4s; }
+.animate-light4 { animation: light 7s infinite alternate; animation-delay: 0.6s; }
+.animate-light5 { animation: light 7s infinite alternate; animation-delay: 0.8s; }
+.animate-light6 { animation: light 7s infinite alternate; animation-delay: 1s; }
+.animate-light7 { animation: light 7s infinite alternate; animation-delay: 1.2s; }
+.animate-light8 { animation: light 7s infinite alternate; animation-delay: 1.4s; }
+.animate-light9 { animation: light 7s infinite alternate; animation-delay: 1.6s; }
+.animate-light10 { animation: light 7s infinite alternate; animation-delay: 1.8s; }
+.animate-light11 { animation: light 7s infinite alternate; animation-delay: 2s; }
+.animate-light12 { animation: light 7s infinite alternate; animation-delay: 2.2s; }
+.animate-light13 { animation: light 7s infinite alternate; animation-delay: 2.4s; }
+.animate-light14 { animation: light 7s infinite alternate; animation-delay: 2.6s; }
+.animate-light15 { animation: light 7s infinite alternate; animation-delay: 2.8s; }
+.animate-light16 { animation: light 7s infinite alternate; animation-delay: 3s; }
+.animate-light17 { animation: light 7s infinite alternate; animation-delay: 3.2s; }
+.animate-light18 { animation: light 7s infinite alternate; animation-delay: 3.4s; }
+.animate-light19 { animation: light 7s infinite alternate; animation-delay: 3.6s; }
+.animate-light20 { animation: light 7s infinite alternate; animation-delay: 3.8s; }
+.animate-light21 { animation: light 7s infinite alternate; animation-delay: 4s; }
+.animate-light22 { animation: light 7s infinite alternate; animation-delay: 4.2s; }
+.animate-light23 { animation: light 7s infinite alternate; animation-delay: 4.4s; }
+.animate-light24 { animation: light 7s infinite alternate; animation-delay: 4.6s; }
+.animate-light25 { animation: light 7s infinite alternate; animation-delay: 4.8s; }
+.animate-light26 { animation: light 7s infinite alternate; animation-delay: 5s; }
+.animate-light27 { animation: light 7s infinite alternate; animation-delay: 5.2s; }
+.animate-light28 { animation: light 7s infinite alternate; animation-delay: 5.4s; }
+.animate-light29 { animation: light 7s infinite alternate; animation-delay: 5.6s; }
+.animate-light30 { animation: light 7s infinite alternate; animation-delay: 5.8s; }
+.animate-light31 { animation: light 7s infinite alternate; animation-delay: 6s; }
+.animate-light32 { animation: light 7s infinite alternate; animation-delay: 6.2s; }
+.animate-light33 { animation: light 7s infinite alternate; animation-delay: 6.4s; }
+.animate-light34 { animation: light 7s infinite alternate; animation-delay: 6.6s; }
+.animate-light35 { animation: light 7s infinite alternate; animation-delay: 6.8s; }
+.animate-light36 { animation: light 7s infinite alternate; animation-delay: 7s; }
+.animate-light37 { animation: light 7s infinite alternate; animation-delay: 7.2s; }
+.animate-light38 { animation: light 7s infinite alternate; animation-delay: 7.4s; }
+
+</style>
